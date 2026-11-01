@@ -1,0 +1,2 @@
+import { createPushRouter } from "./routes/push";
+app.use("/api/push", createPushRouter());

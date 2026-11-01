@@ -1,0 +1,42 @@
+{
+  "name": "zipy-esim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ZipY eSIM retail storefront with AI travel planner.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n server,vite -c blue,magenta \"npm:dev:server\" \"npm:dev:vite\"",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:vite": "vite",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start": "node dist/server/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:migrate": "tsx scripts/db-migrate.ts",
+    "test": "node --test --test-reporter spec --import tsx \"server/**/*.test.ts\"",
+    "test:watch": "node --test --watch --import tsx \"server/**/*.test.ts\""
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.33.0",
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.0",
+    "@types/pg": "^8.11.6",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.19",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
+  }
+}
