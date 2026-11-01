@@ -1,0 +1,27 @@
+# Static fallback. In production, prefer the dynamic route
+# GET /robots.txt from server/routes/seo.ts (buildRobotsTxt) so the
+# Sitemap URL matches the deployed host. This file is included so a
+# static host serving /public directly still gets a sensible policy.
+#
+# Explicitly allow the storefront + SEO + tools pages; block private,
+# transactional, and API endpoints from crawl budget.
+
+User-agent: *
+Allow: /
+
+# Private / transactional — never index.
+Disallow: /api/
+Disallow: /admin
+Disallow: /my-esims
+Disallow: /checkout
+Disallow: /order
+Disallow: /login
+Disallow: /signup
+Disallow: /account
+Disallow: /auto-topup
+Disallow: /webhooks
+Disallow: /api/webhooks/
+
+# Sitemap is generated dynamically; the static file points at the
+# conventional path so a static host still resolves it.
+Sitemap: /sitemap.xml
