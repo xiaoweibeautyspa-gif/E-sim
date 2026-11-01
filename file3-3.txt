@@ -1,0 +1,3 @@
+mv file3.txt server/routes/esims.integration.test.ts
+DATABASE_URL=postgres://… npm run db:migrate
+DATABASE_URL=postgres://… npm test

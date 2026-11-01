@@ -1,0 +1,3 @@
+npm install
+DATABASE_URL=postgres://… npm run db:migrate     # already required by earlier phases
+npm test -- server/tests/e2e.flow.full.test.ts
