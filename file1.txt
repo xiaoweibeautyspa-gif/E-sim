@@ -1,0 +1,7 @@
+EsimCard expects:  id: string, country: string, planName: string,
+                   usage: { totalBytes, usedBytes, lastUpdatedAt },
+                   topUpEligible: boolean, status: "ready" | "installed" | ...
+
+usageService returns: id: number, country: string | null, network: string | null,
+                      totalBytes/usedBytes/usageUpdatedAt at top level,
+                      no planName, no topUpEligible

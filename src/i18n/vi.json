@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "locale": "vi",
+    "note": "Vietnamese string table. Keys mirror src/i18n/en.json and zh.json one-for-one so the switcher and landing pages never need to branch per locale. Missing keys fall back to en."
+  },
+
+  "locale": {
+    "switchLabel": "Ngôn ngữ",
+    "currentLabel": "Ngôn ngữ hiện tại",
+    "names": {
+      "en": "English",
+      "zh": "简体中文",
+      "vi": "Tiếng Việt"
+    }
+  },
+
+  "nav": {
+    "home": "Trang chủ",
+    "destinations": "Điểm đến",
+    "tripPlanner": "Lập kế hoạch AI",
+    "myEsims": "eSIM của tôi",
+    "signIn": "Đăng nhập",
+    "signOut": "Đăng xuất"
+  },
+
+  "common": {
+    "from": "từ",
+    "perDay": "/ ngày",
+    "buyNow": "Mua ngay",
+    "seePlans": "Xem gói eSIM",
+    "learnMore": "Tìm hiểu thêm",
+    "readGuide": "Đọc hướng dẫn",
+    "installGuide": "Hướng dẫn cài đặt",
+    "guarantee": "Hoàn tiền đầy đủ nếu eSIM chưa được cài đặt.",
+    "updatedEveryFewHours": "Dữ liệu sử dụng được cập nhật mỗi vài giờ.",
+    "languageNote": "Bạn có thể đổi ngôn ngữ bất kỳ lúc nào ở góc trên.",
+    "or": "hoặc",
+    "loading": "Đang tải…",
+    "retry": "Thử lại",
+    "close": "Đóng"
+  },
+
+  "home": {
+    "tagline": "Dữ liệu du lịch tức thì. Không còn cước chuyển vùng bất ngờ.",
+    "searchPlaceholder": "Bạn sẽ đi đâu? Nhập quốc gia hoặc thành phố",
+    "searchLabel": "Tìm điểm đến",
+    "popularDestinations": "Điểm đến phổ biến",
+    "regionalPlans": "Gói khu vực (nhiều nước)",
+    "globalPlans": "Gói toàn cầu",
+    "dailyPlans": "Gói dữ liệu theo ngày",
+    "howItWorksHeading": "eSIM hoạt động như thế nào",
+    "howItWorks1Title": "1. Chọn gói",
+    "howItWorks1Body": "Chọn quốc gia và dung lượng phù hợp với chuyến đi của bạn.",
+    "howItWorks2Title": "2. Quét QR",
+    "howItWorks2Body": "Mở email, mở camera, quét mã QR. Chưa đến 2 phút.",
+    "howItWorks3Title": "3. Lên đường",
+    "howItWorks3Body": "Bật chuyến đi dữ liệu khi máy bay hạ cánh. Không phí kích hoạt, không hợp đồng."
+  },
+
+  "country": {
+    "pageTitle": "eSIM tốt nhất cho {country}",
+    "intro": "Dữ liệu di động tức thì cho {country}. Không phí chuyển vùng, không SIM vật lý. Có sẵn gói từ vài ngày đến cả tháng.",
+    "plansHeading": "Gói dữ liệu cho {country}",
+    "bestValueBadge": "Đáng giá nhất",
+    "runsOn": "Chạy trên {network}",
+    "filterData": "Dung lượng dữ liệu",
+    "filterDuration": "Thời hạn",
+    "filterDaily": "Chỉ gói theo ngày",
+    "reviewsHeading": "Đánh giá từ khách đã mua",
+    "reviewsEmpty": "Chưa có đánh giá cho {country}. Bạn có thể để lại đánh giá sau chuyến đi.",
+    "coverage": "Vùng phủ sóng",
+    "networks": "Mạng di động"
+  },
+
+  "tourist": {
+    "singapore": {
+      "pageTitle": "eSIM Singapore cho du khách",
+      "eyebrow": "Dành cho khách du lịch đến Singapore",
+      "headline": "eSIM Singapore cho du khách",
+      "subhead": "Dữ liệu di động tức thì khi bạn đáp xuống Changi. Không cần SIM vật lý, không phí chuyển vùng, không phải xếp hàng ở quầy.",
+      "primaryCta": "Chọn gói dữ liệu Singapore",
+      "secondaryCta": "Lập kế hoạch chuyến đi bằng AI",
+      "whyHeading": "Vì sao chọn eSIM khi đến Singapore",
+      "why1Title": "Hoạt động trong 2 phút sau khi đáp",
+      "why1Body": "Quét QR trước khi khởi hành hoặc ngay khi hạ cánh. Không cần tìm cửa hàng SIM.",
+      "why2Title": "Không lo mất SIM chính",
+      "why2Body": "eSIM chạy song song với số điện thoại hiện tại, nên bạn vẫn nhận được OTP và cuộc gọi.",
+      "why3Title": "Phủ sóng 5G toàn đảo",
+      "why3Body": "Kết nối với các mạng lớn tại Singapore để có tốc độ ổn định ở trung tâm và ngoại ô.",
+      "why4Title": "Hoàn tiền nếu chưa cài",
+      "why4Body": "Chưa cài đặt eSIM? Bạn được hoàn tiền đầy đủ. Yêu cầu rút tiền trực tiếp trong bảng điều khiển của bạn.",
+      "networkHeading": "Mạng di động tại Singapore",
+      "networkBody": "Chúng tôi kết nối với các nhà mạng di động lớn của Singapore để đảm bảo tín hiệu mạnh trên toàn đảo — từ Changi đến Sentosa, từ trung tâm đến các khu dân cư.",
+      "practicalHeading": "Thông tin thực tế khi đến Singapore",
+      "practicalMoney": "Đơn vị tiền tệ: Đô la Singapore (SGD). Thẻ tín dụng được chấp nhận rộng rãi; mang ít tiền mặt dự phòng.",
+      "practicalPlug": "Ổ cắm: Loại G (ba chấu kiểu Anh), 230V. Du khách từ châu Âu hoặc Mỹ sẽ cần bộ chuyển đổi.",
+      "practicalTransport": "Giao thông công cộng: MRT và xe buýt rất tiện. Mua thẻ EZ-Link hoặc dùng thẻ ngân hàng không tiếp xúc.",
+      "practicalApps": "Ứng dụng nên cài trước: Grab (gọi xe), Google Maps, ứng dụng của hãng hàng không.",
+      "practicalEmergency": "Số khẩn cấp: 999 (cảnh sát), 995 (cứu hỏa và cấp cứu).",
+      "installHeading": "Cài đặt eSIM Singapore",
+      "installBody": "Bạn sẽ nhận được email có mã QR và hướng dẫn từng bước cho iPhone và Android. Quét, đặt tên cho dòng dữ liệu, bật dữ liệu chuyển vùng khi đến.",
+      "faqHeading": "Câu hỏi thường gặp",
+      "faq1Q": "Tôi có cần SIM vật lý không?",
+      "faq1A": "Không. eSIM được nhúng sẵn trong iPhone và hầu hết điện thoại Android đời mới từ 2018. Bạn chỉ cần quét mã QR.",
+      "faq2Q": "Điện thoại của tôi có hỗ trợ eSIM không?",
+      "faq2A": "Hầu hết điện thoại cao cấp từ 2018 đều hỗ trợ eSIM. Nếu không chắc, hãy dùng công cụ kiểm tra tương thích trên trang chủ.",
+      "faq3Q": "Tôi có thể giữ số Singapore hiện tại không?",
+      "faq3A": "eSIM chỉ cung cấp dữ liệu. Bạn vẫn có thể dùng số điện thoại hiện tại (thường phát sinh phí chuyển vùng), hoặc mua SIM địa phương nếu cần số Singapore.",
+      "faq4Q": "eSIM có hoạt động ở Sentosa và sân bay không?",
+      "faq4A": "Có, các gói của chúng tôi kết nối với mạng di động phủ sóng toàn đảo, bao gồm sân bay Changi và Sentosa.",
+      "faq5Q": "Tôi nên mua trước hay mua khi đến?",
+      "faq5A": "Mua trước rồi quét QR trước khi khởi hành tiện nhất — bạn sẽ có dữ liệu ngay khi máy bay hạ cánh.",
+      "ctaHeading": "Sẵn sàng lên đường?",
+      "ctaBody": "Chọn gói dữ liệu và cài đặt eSIM trong vài phút."
+    }
+  },
+
+  "footer": {
+    "copyright": "© {year} {brand}. Mọi quyền được bảo lưu.",
+    "terms": "Điều khoản",
+    "privacy": "Quyền riêng tư",
+    "contact": "Liên hệ",
+    "blog": "Blog",
+    "languages": "Ngôn ngữ"
+  }
+}

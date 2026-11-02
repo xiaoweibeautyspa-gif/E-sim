@@ -1,0 +1,3 @@
+const record: UsageRefreshRunRecord = { startedAt, finishedAt, result, error };
+lastRun = record;
+options.onRun?.(record);

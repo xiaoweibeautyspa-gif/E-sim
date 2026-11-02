@@ -1,0 +1,262 @@
+// file3.txt — continued (real Postgres integration tests for /api/esims)
+import { test, before, after } from "node:test";
+import assert from "node:assert/strict";
+import http from "node:http";
+import type { AddressInfo } from "node:net";
+import express, { type RequestHandler } from "express";
+import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
+
+import { createEsimsRouter } from "./esims";
+import { esims } from "../db/schema";
+
+const DATABASE_URL = process.env.DATABASE_URL?.trim();
+const skip = !DATABASE_URL ? { skip: "DATABASE_URL not set" } : {};
+
+// ---------------------------------------------------------------------------
+// Fixtures
+// ---------------------------------------------------------------------------
+
+interface SeedRow {
+  userId: number;
+  orderPublicId: string;
+  country?: string | null;
+  countrySlug?: string | null;
+  network?: string | null;
+  status?: string;
+  totalBytes?: string | number | null;
+  usedBytes?: string | number | null;
+  usageUpdatedAt?: Date | null;
+  expiresAt?: Date | null;
+  iccid?: string | null;
+  esimTranNo?: string | null;
+  lpaCode?: string | null;
+  qrCodeUrl?: string | null;
+}
+
+let pool: Pool;
+let db: ReturnType<typeof drizzle>;
+let seededIds: number[] = [];
+let server: http.Server;
+let baseUrl: string;
+
+const USER_A = 900_001;
+const USER_B = 900_002;
+
+function shimGetDb(): unknown {
+  // `createEsimsRouter` expects a function returning the drizzle client or
+  // null. We pass the real client; the route's SQL (id + userId + ORDER BY)
+  // then runs against Postgres, which is the whole point of this file.
+  return () => db;
+}
+
+async function startServer(): Promise<void> {
+  const app = express();
+  app.use(express.json());
+
+  // Inject requireAuth the same way `server/routes/esims.test.ts` does. The
+  // user id is read from the request header so each test can act as A or B
+  // without spinning a new server.
+  const fakeAuth: RequestHandler = (req, res, next) => {
+    const raw = req.header("x-test-user");
+    const id = raw ? Number(raw) : NaN;
+    if (!Number.isInteger(id) || id <= 0) {
+      res.status(401).json({ ok: false, error: "unauthorized", message: "Sign in." });
+      return;
+    }
+    (req as unknown as { user: { id: number; email: string } }).user = {
+      id,
+      email: `user${id}@example.test`,
+    };
+    next();
+  };
+
+  const router = createEsimsRouter({
+    requireAuth: fakeAuth,
+    getDb: shimGetDb() as never,
+    // Deterministic clock for daysLeft assertions.
+    now: () => new Date("2024-06-01T12:00:00Z"),
+  });
+  app.use("/api/esims", router);
+
+  server = http.createServer(app);
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", () => resolve()));
+  const address = server.address() as AddressInfo;
+  baseUrl = `http://127.0.0.1:${address.port}`;
+}
+
+async function seed(rows: SeedRow[]): Promise<number[]> {
+  if (rows.length === 0) return [];
+  const inserted = await db
+    .insert(esims)
+    .values(
+      rows.map((r) => ({
+        userId: r.userId,
+        orderPublicId: r.orderPublicId,
+        country: r.country ?? "Singapore",
+        countrySlug: r.countrySlug ?? "sg",
+        network: r.network ?? "Singtel 5G",
+        status: r.status ?? "installed",
+        totalBytes: r.totalBytes ?? null,
+        usedBytes: r.usedBytes ?? null,
+        usageUpdatedAt: r.usageUpdatedAt ?? null,
+        expiresAt: r.expiresAt ?? null,
+        iccid: r.iccid ?? null,
+        esimTranNo: r.esimTranNo ?? null,
+        lpaCode: r.lpaCode ?? null,
+        qrCodeUrl: r.qrCodeUrl ?? null,
+      })),
+    )
+    .returning({ id: esims.id });
+  const ids = inserted.map((r) => r.id);
+  seededIds.push(...ids);
+  return ids;
+}
+
+async function getJson(path: string, asUser: number): Promise<{ status: number; body: unknown }> {
+  const res = await fetch(`${baseUrl}${path}`, {
+    headers: { Accept: "application/json", "x-test-user": String(asUser) },
+  });
+  const body = await res.json().catch(() => null);
+  return { status: res.status, body };
+}
+
+// ---------------------------------------------------------------------------
+// Lifecycle
+// ---------------------------------------------------------------------------
+
+before(async () => {
+  if (!DATABASE_URL) return;
+  pool = new Pool({ connectionString: DATABASE_URL });
+  // Fail fast on a missing schema so tests don't silently "pass".
+  await pool.query("SELECT 1 FROM esims LIMIT 0");
+  db = drizzle(pool);
+  await startServer();
+});
+
+after(async () => {
+  if (!DATABASE_URL) return;
+  try {
+    if (seededIds.length > 0) {
+      await pool.query("DELETE FROM esims WHERE id = ANY($1::int[])", [seededIds]);
+    }
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      server.close((err) => (err ? reject(err) : resolve())),
+    );
+    await pool.end();
+  }
+});
+
+// Each test seeds its own rows; cleanup happens via userId-scoped delete to
+// keep isolation cheap.
+async function clearUser(userId: number): Promise<void> {
+  await pool.query("DELETE FROM esims WHERE user_id = $1", [userId]);
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+test("POSTed eSIMs for the signed-in user are returned by GET /api/esims", skip, async () => {
+  await clearUser(USER_A);
+  const [id] = await seed([
+    {
+      userId: USER_A,
+      orderPublicId: "ORD-A-1",
+      totalBytes: 2 * 1024 * 1024 * 1024,
+      usedBytes: 512 * 1024 * 1024,
+      usageUpdatedAt: new Date("2024-06-01T10:30:00Z"),
+      expiresAt: new Date("2024-06-08T12:00:00Z"),
+      iccid: "8900000000000000001",
+      esimTranNo: "T-A-1",
+      lpaCode: "LPA:1$example",
+    },
+  ]);
+
+  const r = await getJson("/api/esims", USER_A);
+  assert.equal(r.status, 200);
+  const body = r.body as {
+    ok: true;
+    data: { usageFreshnessMinutes: number; esims: Array<Record<string, unknown>> };
+  };
+  assert.equal(body.ok, true);
+  assert.equal(body.data.usageFreshnessMinutes, 180);
+  const mine = body.data.esims.find((e) => Number(e.id) === id);
+  assert.ok(mine, "seeded eSIM must be present");
+  // Bytes are NOT divided by 10000.
+  assert.equal(Number(mine!.totalBytes), 2 * 1024 * 1024 * 1024);
+  assert.equal(Number(mine!.usedBytes), 512 * 1024 * 1024);
+  assert.equal(mine!.usageUpdatedAt, "2024-06-01T10:30:00.000Z");
+  assert.equal(mine!.daysLeft, 7);
+  assert.equal(mine!.hasQr, true);
+  assert.equal(mine!.qrPath, `/api/esims/${id}/qr`);
+});
+
+test("another user's rows never appear in GET /api/esims", skip, async () => {
+  await clearUser(USER_A);
+  await clearUser(USER_B);
+  await seed([{ userId: USER_B, orderPublicId: "ORD-B-1" }]);
+
+  const r = await getJson("/api/esims", USER_A);
+  assert.equal(r.status, 200);
+  const body = r.body as { ok: true; data: { esims: Array<Record<string, unknown>> } };
+  assert.equal(body.data.esims.length, 0, "user A must not see user B's eSIM");
+});
+
+test("GET /api/esims/:id returns 404 for another user's row", skip, async () => {
+  await clearUser(USER_B);
+  const [bId] = await seed([{ userId: USER_B, orderPublicId: "ORD-B-2", lpaCode: "LPA:1$b" }]);
+
+  const r = await getJson(`/api/esims/${bId}`, USER_A);
+  assert.equal(r.status, 404);
+  const body = r.body as { ok: false; error: string };
+  assert.equal(body.ok, false);
+  assert.equal(body.error, "not_found");
+});
+
+test("GET /api/esims/:id/qr returns 409 when the QR is not ready", skip, async () => {
+  await clearUser(USER_A);
+  const [id] = await seed([
+    { userId: USER_A, orderPublicId: "ORD-A-2", status: "processing", lpaCode: null, qrCodeUrl: null },
+  ]);
+  const r = await getJson(`/api/esims/${id}/qr`, USER_A);
+  assert.equal(r.status, 409);
+  const body = r.body as { ok: false; error: string };
+  assert.equal(body.error, "qr_not_ready");
+});
+
+test("GET /api/esims returns 503 when the DB is unreachable", skip, async () => {
+  // Stand up a second Express app that injects a `getDb()` returning null. We
+  // don't need the seeded data — this asserts the honest degraded state the
+  // page's `esims_unavailable` branch depends on.
+  const app = express();
+  const fakeAuth: RequestHandler = (req, _res, next) => {
+    (req as unknown as { user: { id: number; email: string } }).user = {
+      id: USER_A,
+      email: "u@example.test",
+    };
+    next();
+  };
+  const router = createEsimsRouter({
+    requireAuth: fakeAuth,
+    getDb: (() => null) as never,
+  });
+  app.use("/api/esims", router);
+  const s = http.createServer(app);
+  await new Promise<void>((resolve) => s.listen(0, "127.0.0.1", () => resolve()));
+  const addr = s.address() as AddressInfo;
+  try {
+    const res = await fetch(`http://127.0.0.1:${addr.port}/api/esims`, {
+      headers: { Accept: "application/json" },
+    });
+    assert.equal(res.status, 503);
+    const body = (await res.json()) as { ok: boolean; error: string };
+    assert.equal(body.ok, false);
+    assert.equal(body.error, "esims_unavailable");
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      s.close((err) => (err ? reject(err) : resolve())),
+    );
+  }
+});

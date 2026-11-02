@@ -1,0 +1,67 @@
+{
+  "name": "Zipy eSIM — Instant Travel Data",
+  "short_name": "Zipy",
+  "description": "Buy travel eSIMs for 190+ destinations. Instant delivery, one-tap top-ups, AI trip planner.",
+  "id": "/",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["travel", "utilities", "productivity"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Browse eSIM plans by destination"
+    },
+    {
+      "src": "/screenshots/myesims-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Track data usage and top up in one tap"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My eSIMs",
+      "short_name": "My eSIMs",
+      "url": "/my-esims",
+      "description": "See data usage and top up"
+    },
+    {
+      "name": "Browse plans",
+      "short_name": "Browse",
+      "url": "/",
+      "description": "Find an eSIM for your destination"
+    }
+  ]
+}
